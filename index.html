@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI QA Workbench</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ── Header ─────────────────────────────────────── -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-mark">◈</span>
+          <span class="logo-text">AI QA Workbench</span>
+        </div>
+
+        <!-- API Key Bar -->
+        <!-- The key is stored in state.ts when the user types -->
+        <div class="api-bar">
+          <div class="api-status" id="api-dot"></div>
+          <input
+            type="password"
+            id="api-key-input"
+            class="api-key-input"
+            placeholder="Paste Anthropic API key (sk-ant-...)"
+            autocomplete="off"
+          />
+          <span class="api-label" id="api-label">Not connected</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+
+      <!-- ── Tabs ───────────────────────────────────────── -->
+      <nav class="tabs">
+        <button class="tab active">Test runner</button>
+        <button class="tab">Results log</button>
+        <button class="tab">Bug tracker</button>
+        <button class="tab">Feedback analysis</button>
+      </nav>
+
+      <!-- ══════════════════════════════════════════════════
+           TAB 1: Test Runner
+           The user picks a model, types a prompt, hits Run.
+           The app calls the AI and shows the response.
+           Then the tester evaluates it.
+      ══════════════════════════════════════════════════ -->
+      <section id="view-test" class="view active">
+
+        <div class="notice-box" id="no-key-notice">
+          Paste your Anthropic API key above to run live tests.
+          Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+          — it starts with <code>sk-ant-</code>.
+          Don't have one? Select a mock model below to try the full flow.
+        </div>
+
+        <div class="card">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="model-select">Model under test</label>
+              <select id="model-select">
+                <option value="claude-sonnet-4-20250514">claude-sonnet-4-6</option>
+                <option value="claude-opus-4-20250514">claude-opus-4-6</option>
+                <option value="mock-gpt4o">GPT-4o (mock)</option>
+                <option value="mock-gemini">Gemini 1.5 Pro (mock)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="category-select">Test category</label>
+              <select id="category-select">
+                <option>General quality</option>
+                <option>Edge case</option>
+                <option>Safety / refusal</option>
+                <option>Factual accuracy</option>
+                <option>Instruction following</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prompt-input">Prompt to test</label>
+            <textarea
+              id="prompt-input"
+              placeholder="e.g. Explain recursion like I'm 10 years old"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <button class="btn-primary" id="run-btn">Run test</button>
+        </div>
+
+        <!-- Eval section — hidden until a test runs -->
+        <div id="eval-section" style="display:none">
+          <div class="card">
+            <div class="response-header">
+              <span class="section-label">AI response</span>
+              <span class="chip" id="resp-time"></span>
+            </div>
+            <div class="ai-response-box" id="ai-response-box"></div>
+
+            <div class="eval-divider"></div>
+
+            <p class="section-label" style="margin-bottom:10px">Evaluate this response</p>
+
+            <div class="form-group">
+              <label>Quality rating</label>
+              <div class="star-row" id="stars">
+                <span class="star" data-v="1">★</span>
+                <span class="star" data-v="2">★</span>
+                <span class="star" data-v="3">★</span>
+                <span class="star" data-v="4">★</span>
+                <span class="star" data-v="5">★</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="verdict-select">Verdict</label>
+              <select id="verdict-select">
+                <option value="pass">Pass — response is acceptable</option>
+                <option value="fail">Fail — response has issues</option>
+                <option value="partial">Partial — needs improvement</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="eval-notes">Notes (optional)</label>
+              <textarea
+                id="eval-notes"
+                placeholder="What worked? What didn't? Any edge cases to note?"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn-primary" id="save-result-btn">Save result</button>
+              <button class="btn-danger-outline" id="log-bug-btn">Log as bug</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ══════════════════════════════════════════════════
+           TAB 2: Results Log
+      ══════════════════════════════════════════════════ -->
+      <section id="view-results" class="view">
+
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="metric-val" id="m-total">0</div>
+            <div class="metric-label">Total tests</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val pass-val" id="m-pass">0</div>
+            <div class="metric-label">Passed</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val fail-val" id="m-fail">0</div>
+            <div class="metric-label">Failed</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="m-avg">—</div>
+            <div class="metric-label">Avg rating</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="section-label" style="margin-bottom:12px">All test results</p>
+          <div id="results-list">
+            <div class="empty">No tests run yet. Go to Test runner to start.</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ══════════════════════════════════════════════════
+           TAB 3: Bug Tracker
+      ══════════════════════════════════════════════════ -->
+      <section id="view-bugs" class="view">
+
+        <div class="section-header">
+          <p class="section-label">Bug tracker</p>
+          <button class="btn-primary" id="add-bug-btn">+ Log bug</button>
+        </div>
+
+        <!-- Bug form — hidden by default -->
+        <div id="bug-form-wrap" style="display:none">
+          <div class="card">
+            <div class="form-row-2">
+              <div class="form-group" style="flex:2">
+                <label for="bug-title">Bug title</label>
+                <input type="text" id="bug-title" placeholder="Short description of the issue" />
+              </div>
+              <div class="form-group">
+                <label for="bug-severity">Severity</label>
+                <select id="bug-severity">
+                  <option value="low">Low</option>
+                  <option value="med" selected>Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="bug-desc">Steps to reproduce / details</label>
+              <textarea id="bug-desc" placeholder="What went wrong? How to reproduce it?" rows="4"></textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" id="save-bug-btn">Save bug</button>
+              <button class="btn-outline" id="cancel-bug-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div id="bug-list">
+            <div class="empty">No bugs logged yet.</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ══════════════════════════════════════════════════
+           TAB 4: Feedback Analysis
+      ══════════════════════════════════════════════════ -->
+      <section id="view-feedback" class="view">
+
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="metric-val" id="f-total">0</div>
+            <div class="metric-label">Tests run</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val pass-val" id="f-pass-pct">—</div>
+            <div class="metric-label">Pass rate</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="f-avg-rat">—</div>
+            <div class="metric-label">Avg rating</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val fail-val" id="f-bugs">0</div>
+            <div class="metric-label">Open bugs</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="section-label" style="margin-bottom:12px">Evaluator notes</p>
+          <div id="feedback-list">
+            <div class="empty">Add notes when saving test results — they'll appear here.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1rem">
+          <p class="section-label" style="margin-bottom:12px">Bugs by severity</p>
+          <div id="bug-severity-summary">
+            <div class="empty">No bugs logged yet.</div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!--
+    The compiled TypeScript (dist/bundle.js) is loaded here.
+    type="module" enables ES module imports/exports.
+    We place it at the bottom of <body> so the HTML above
+    is already parsed when the script runs.
+  -->
+  <script type="module" src="dist/bundle.js"></script>
+
+</body>
+</html>
