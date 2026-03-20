@@ -16,10 +16,10 @@
         <div class="logo">
           <span class="logo-mark">◈</span>
           <span class="logo-text">AI QA Workbench</span>
+          <span class="logo-badge">Beta</span>
         </div>
 
         <!-- API Key Bar -->
-        <!-- The key is stored in state.ts when the user types -->
         <div class="api-bar">
           <div class="api-status" id="api-dot"></div>
           <input
@@ -31,7 +31,15 @@
           />
           <span class="api-label" id="api-label">Not connected</span>
         </div>
+
+        <!-- Dark / Light mode toggle -->
+        <button class="theme-toggle" id="theme-toggle" title="Toggle dark/light mode">
+          <span class="theme-icon" id="theme-icon">🌙</span>
+          <span id="theme-label">Dark</span>
+        </button>
       </div>
+      <!-- Google colour strip — nod to the free Gemini API -->
+      <div class="google-strip"></div>
     </header>
 
     <main class="app-main">
@@ -273,13 +281,44 @@
     </main>
   </div>
 
-  <!--
-    The compiled TypeScript (dist/bundle.js) is loaded here.
-    type="module" enables ES module imports/exports.
-    We place it at the bottom of <body> so the HTML above
-    is already parsed when the script runs.
-  -->
-  <script type="module" src="dist/bundle.js"></script>
+  <script>
+    // Theme toggle — runs immediately before page renders to avoid flash
+    (function() {
+      const saved = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <script type="module" src="/src/main.ts"></script>
+
+  <script>
+    // Wire up the theme toggle button after DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('theme-toggle');
+      var icon = document.getElementById('theme-icon');
+      var label = document.getElementById('theme-label');
+
+      function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        if (theme === 'dark') {
+          icon.textContent = '☀️';
+          label.textContent = 'Light';
+        } else {
+          icon.textContent = '🌙';
+          label.textContent = 'Dark';
+        }
+      }
+
+      // Set initial button state
+      applyTheme(localStorage.getItem('theme') || 'light');
+
+      btn.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+    });
+  </script>
 
 </body>
 </html>
