@@ -1,58 +1,170 @@
 // ============================================================
 // api.ts — Handles all communication with AI model APIs
 // ============================================================
-// Separating API calls into their own file means:
-// 1. You can swap out the API without touching UI code
-// 2. You can mock this file in tests
-// 3. All error handling is in one place
+// Supports:
+//   - Google Gemini (free tier — no credit card needed)
+//   - Anthropic Claude (paid — sk-ant- key)
+//   - Mock models (no key needed — for exploring the UI)
 // ============================================================
 
-import { TestRun } from "./types";
+// ── Response type shapes from each API ───────────────────────
 
-// The Anthropic API response shape — only the fields we need.
-// TypeScript lets you define exactly what you expect from
-// external APIs, catching surprises at compile time.
+interface GeminiResponse {
+  candidates?: Array<{
+    content: { parts: Array<{ text: string }> };
+  }>;
+  error?: { message: string; code: number };
+}
+
 interface AnthropicResponse {
   content: Array<{ type: string; text?: string }>;
   error?: { message: string };
 }
 
-// MOCK_RESPONSES simulates other models (GPT-4o, Gemini) for
-// demo purposes — in production you'd add those real API calls.
+// ── Mock responses — no API key needed ───────────────────────
 const MOCK_RESPONSES: Record<string, string> = {
   "mock-gpt4o":
-    "[Mock: GPT-4o] This is a simulated response. In production, connect the OpenAI API here using the same pattern as the Anthropic call below.",
-  "mock-gemini":
-    "[Mock: Gemini 1.5 Pro] This is a simulated response. In production, use the Google Generative AI SDK here.",
+    "[Mock: GPT-4o] This is a simulated response. Select a Gemini model and paste your free API key from aistudio.google.com to get live responses.",
+  "mock-claude":
+    "[Mock: Claude] This is a simulated response. Select a Gemini model and paste your free API key from aistudio.google.com to get live responses.",
 };
 
-// The main function. "async" means it returns a Promise —
-// the caller can "await" it to get the result when ready.
+// ── Detect which API to use based on the model value ─────────
+function getApiType(modelValue: string): "gemini" | "anthropic" | "mock" {
+  if (modelValue.startsWith("mock-")) return "mock";
+  if (modelValue.startsWith("gemini-")) return "gemini";
+  if (modelValue.startsWith("claude-")) return "anthropic";
+  return "mock";
+}
+
+// ── Validate API key format before calling ───────────────────
+function validateKey(modelValue: string, apiKey: string): string | null {
+  const type = getApiType(modelValue);
+  if (type === "mock") return null;
+
+  if (!apiKey || apiKey.trim().length < 10) {
+    if (type === "gemini") {
+      return "No API key found. Go to aistudio.google.com, sign in with your Google account, click Get API key, copy it, and paste it in the bar above. It is completely free — no credit card needed.";
+    }
+    return "No Anthropic API key found. Paste your sk-ant- key in the bar above.";
+  }
+
+  if (type === "anthropic" && !apiKey.startsWith("sk-ant-")) {
+    return "That does not look like an Anthropic key (should start with sk-ant-). For a free option, select a Gemini model and get a free key from aistudio.google.com.";
+  }
+
+  return null;
+}
+
+// ── Main exported function ────────────────────────────────────
 export async function callModel(
   prompt: string,
   modelValue: string,
   apiKey: string
 ): Promise<{ response: string; elapsed: string }> {
   const startTime = Date.now();
+  const apiType = getApiType(modelValue);
 
-  // Handle mock models first — no API call needed
-  if (modelValue.startsWith("mock-")) {
-    await delay(600); // Simulate network latency
+  // Mock models — no API call needed
+  if (apiType === "mock") {
+    await delay(700);
     return {
-      response: MOCK_RESPONSES[modelValue] ?? "[Mock response]",
+      response:
+        MOCK_RESPONSES[modelValue] ??
+        "[Mock response] Select a Gemini model and paste your free API key from aistudio.google.com to run live tests.",
       elapsed: formatElapsed(startTime),
     };
   }
 
-  if (!apiKey || !apiKey.startsWith("sk-ant-")) {
-    return {
-      response:
-        "No valid API key. Paste your Anthropic key (sk-ant-...) in the bar at the top.",
-      elapsed: "0s",
-    };
+  // Validate key before making a real call
+  const keyError = validateKey(modelValue, apiKey);
+  if (keyError) return { response: keyError, elapsed: "0s" };
+
+  if (apiType === "gemini") {
+    return callGemini(prompt, modelValue, apiKey.trim(), startTime);
   }
 
-  // Real Anthropic API call
+  if (apiType === "anthropic") {
+    return callAnthropic(prompt, modelValue, apiKey.trim(), startTime);
+  }
+
+  return { response: "Unknown model type.", elapsed: "0s" };
+}
+
+// ── Gemini implementation ─────────────────────────────────────
+// Free tier — get your key at aistudio.google.com
+// No credit card required. Limits: 15 requests/minute, 1500/day
+async function callGemini(
+  prompt: string,
+  modelValue: string,
+  apiKey: string,
+  startTime: number
+): Promise<{ response: string; elapsed: string }> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelValue}:generateContent?key=${apiKey}`;
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        systemInstruction: {
+          parts: [
+            {
+              text: "You are an AI model being tested by a QA tester. Answer the prompt directly and helpfully.",
+            },
+          ],
+        },
+        generationConfig: {
+          maxOutputTokens: 1000,
+          temperature: 0.7,
+        },
+      }),
+    });
+
+    const data = (await res.json()) as GeminiResponse;
+
+    if (data.error) {
+      if (data.error.code === 400) {
+        return {
+          response: `Invalid API key. Make sure you copied the full key from aistudio.google.com and pasted it correctly.`,
+          elapsed: formatElapsed(startTime),
+        };
+      }
+      if (data.error.code === 429) {
+        return {
+          response:
+            "Rate limit reached — you have hit the free tier limit. Wait a minute and try again.",
+          elapsed: formatElapsed(startTime),
+        };
+      }
+      return {
+        response: `Gemini error: ${data.error.message}`,
+        elapsed: formatElapsed(startTime),
+      };
+    }
+
+    const text =
+      data.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ??
+      "No response returned from Gemini.";
+
+    return { response: text, elapsed: formatElapsed(startTime) };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      response: `Network error: ${message}. Check your internet connection and try again.`,
+      elapsed: formatElapsed(startTime),
+    };
+  }
+}
+
+// ── Anthropic implementation ──────────────────────────────────
+async function callAnthropic(
+  prompt: string,
+  modelValue: string,
+  apiKey: string,
+  startTime: number
+): Promise<{ response: string; elapsed: string }> {
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -60,8 +172,6 @@ export async function callModel(
         "Content-Type": "application/json",
         "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
-        // This header is required for direct browser-to-API calls.
-        // In production, route through your own backend instead.
         "anthropic-dangerous-direct-browser-access": "true",
       },
       body: JSON.stringify({
@@ -73,18 +183,15 @@ export async function callModel(
       }),
     });
 
-    // "as AnthropicResponse" is a TypeScript type assertion —
-    // we tell TypeScript what shape to expect from the JSON.
     const data = (await res.json()) as AnthropicResponse;
 
     if (data.error) {
       return {
-        response: `API error: ${data.error.message}`,
+        response: `Anthropic error: ${data.error.message}`,
         elapsed: formatElapsed(startTime),
       };
     }
 
-    // Extract text from the content array
     const text = data.content
       .filter((b) => b.type === "text")
       .map((b) => b.text ?? "")
@@ -100,7 +207,7 @@ export async function callModel(
   }
 }
 
-// ── Helpers ──────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

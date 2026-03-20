@@ -26,7 +26,7 @@
             type="password"
             id="api-key-input"
             class="api-key-input"
-            placeholder="Paste Anthropic API key (sk-ant-...)"
+            placeholder="Paste your free Gemini API key from aistudio.google.com"
             autocomplete="off"
           />
           <span class="api-label" id="api-label">Not connected</span>
@@ -53,10 +53,7 @@
       <section id="view-test" class="view active">
 
         <div class="notice-box" id="no-key-notice">
-          Paste your Anthropic API key above to run live tests.
-          Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
-          — it starts with <code>sk-ant-</code>.
-          Don't have one? Select a mock model below to try the full flow.
+          Get a <strong>free</strong> API key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> — sign in with your Google account, click <strong>Get API key</strong>, copy it, and paste it above. No credit card needed. Then select a Gemini model below and run your first test.
         </div>
 
         <div class="card">
@@ -64,10 +61,19 @@
             <div class="form-group">
               <label for="model-select">Model under test</label>
               <select id="model-select">
-                <option value="claude-sonnet-4-20250514">claude-sonnet-4-6</option>
-                <option value="claude-opus-4-20250514">claude-opus-4-6</option>
-                <option value="mock-gpt4o">GPT-4o (mock)</option>
-                <option value="mock-gemini">Gemini 1.5 Pro (mock)</option>
+                <optgroup label="Gemini — Free (no credit card)">
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash ⚡ (fastest, free)</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash (free)</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro (free)</option>
+                </optgroup>
+                <optgroup label="Claude — Paid (Anthropic key)">
+                  <option value="claude-sonnet-4-20250514">claude-sonnet-4-6</option>
+                  <option value="claude-opus-4-20250514">claude-opus-4-6</option>
+                </optgroup>
+                <optgroup label="Mock — No key needed">
+                  <option value="mock-gpt4o">GPT-4o (mock)</option>
+                  <option value="mock-claude">Claude (mock)</option>
+                </optgroup>
               </select>
             </div>
             <div class="form-group">
@@ -273,7 +279,7 @@
     We place it at the bottom of <body> so the HTML above
     is already parsed when the script runs.
   -->
-  <script type="module" src="/src/main.ts"></script>
+  <script type="module" src="dist/bundle.js"></script>
 
 </body>
 </html>

@@ -27,15 +27,18 @@ export function updateApiStatus(key: string): void {
   const label = el("api-label");
   const notice = el("no-key-notice");
 
-  const isValid = key.startsWith("sk-ant-") && key.length > 20;
+  // Accept Gemini keys (any reasonable length) or Anthropic keys (sk-ant-)
+  const isGemini = key.length > 20 && !key.startsWith("sk-ant-");
+  const isAnthropic = key.startsWith("sk-ant-") && key.length > 20;
+  const isValid = isGemini || isAnthropic;
   const hasInput = key.length > 0;
 
   dot.className = "api-status" + (isValid ? " ok" : hasInput ? " err" : "");
   label.textContent = isValid
-    ? "Key entered — ready"
+    ? isGemini ? "Gemini key ready" : "Anthropic key ready"
     : hasInput
-    ? "Invalid format"
-    : "Not connected";
+    ? "Key too short — check you copied the full key"
+    : "No key — get a free one at aistudio.google.com";
   notice.style.display = isValid ? "none" : "block";
 }
 
