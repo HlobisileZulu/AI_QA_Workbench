@@ -1,234 +1,972 @@
-/* =============================================================
-   styles.css — AI QA Workbench  ·  Redesigned
-   Sections:
-   1.  Theme tokens  (light + dark via [data-theme] on <html>)
-   2.  Reset & base
-   3.  Layout
-   4.  Theme toggle
+/* ================================================================
+   AI QA Workbench — styles.css
+   Clean, readable CSS. No tricks, no minification.
+   
+   COLOUR PALETTE (light mode):
+   - Page background : #FAFAF8  (warm off-white / cream)
+   - Cards           : #FFFFFF  (pure white)
+   - Accent          : #7CB9E8  (soft pastel blue)
+   - Accent dark     : #4A90C4  (for hover states)
+   - Accent light    : #E8F4FD  (very light blue for tints)
+   - Green (pass)    : #6DBF9E  (soft pastel green)
+   - Red (fail)      : #E8897A  (soft pastel red)
+   - Amber (partial) : #F0C87A  (soft pastel amber)
+   - Text dark       : #2C2C2C  (near black)
+   - Text mid        : #6B6B6B  (grey)
+   - Text light      : #A0A0A0  (light grey)
+   - Border          : #E2E2DE  (warm light border)
+ 
+   DARK MODE (toggled with [data-theme="dark"] on <html>):
+   - Page background : #1A1A24
+   - Cards           : #24243A
+   - Accent          : #7CB9E8  (same blue looks great on dark)
+   - Text dark       : #EEEEF5
+   - Text mid        : #ABABC0
+   - Border          : #36364E
+ 
+   TABLE OF CONTENTS:
+   1.  CSS variables (colour tokens)
+   2.  Base reset and body styles
+   3.  Page layout and header
+   4.  Header inner content (logo, api bar, toggle)
    5.  Navigation tabs
-   6.  Cards & forms
-   7.  Buttons
-   8.  API key bar
-   9.  Notice boxes
-   10. AI response area
+   6.  Cards
+   7.  Form elements (labels, inputs, selects, textareas)
+   8.  Buttons
+   9.  Notice info box
+   10. AI response display
    11. Star rating
-   12. Badges & chips
-   13. Metric cards
-   14. Lists (results, bugs, feedback)
-   15. Animations & utilities
-   16. Responsive
-   ============================================================= */
-
-/* ── 1. Theme tokens ────────────────────────────────────────── */
+   12. Badges (pass / fail / severity)
+   13. Metric stat cards
+   14. Result rows and bug rows
+   15. Empty state
+   16. Loading spinner
+   17. Responsive (mobile)
+================================================================ */
+ 
+ 
+/* ================================================================
+   1. CSS VARIABLES
+   Change a value here and it updates everywhere it is used.
+================================================================ */
+ 
 :root {
-  --brand:        #4F46E5;
-  --brand-dark:   #3730A3;
-  --brand-light:  #EEF2FF;
-  --brand-glow:   rgba(79,70,229,0.18);
-  --google-blue:  #4285F4;
-  --google-green: #34A853;
-  --google-red:   #EA4335;
-  --google-amber: #FBBC04;
-  --pass:         #16A34A;
-  --pass-bg:      #DCFCE7;
-  --fail:         #DC2626;
-  --fail-bg:      #FEE2E2;
-  --partial:      #D97706;
-  --partial-bg:   #FEF3C7;
-  --info:         #2563EB;
-  --info-bg:      #DBEAFE;
-  --bg:           #F5F3FF;
-  --surface:      #FFFFFF;
-  --surface-2:    #F8F7FF;
-  --surface-3:    #EDEDF8;
-  --border:       rgba(79,70,229,0.12);
-  --border-med:   rgba(79,70,229,0.22);
-  --border-strong:rgba(79,70,229,0.38);
-  --text-1:       #1E1B4B;
-  --text-2:       #4B5563;
-  --text-3:       #9CA3AF;
-  --r-sm: 6px;  --r-md: 10px;  --r-lg: 16px;  --r-xl: 22px;
-  --shadow-sm: 0 1px 4px rgba(79,70,229,0.08);
-  --shadow-md: 0 4px 16px rgba(79,70,229,0.12);
-  --header-bg: linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);
+ 
+  /* --- Colours --- */
+  --cream:          #FAFAF8;
+  --white:          #FFFFFF;
+  --blue:           #7CB9E8;
+  --blue-dark:      #4A90C4;
+  --blue-light:     #E8F4FD;
+  --green:          #6DBF9E;
+  --green-light:    #E6F7F1;
+  --red:            #E8897A;
+  --red-light:      #FDECEA;
+  --amber:          #E8B84B;
+  --amber-light:    #FEF6E4;
+  --pink:           #F0A8C0;
+  --pink-light:     #FEF0F5;
+ 
+  /* --- Text --- */
+  --text-dark:      #2C2C2C;
+  --text-mid:       #6B6B6B;
+  --text-light:     #A0A0A0;
+ 
+  /* --- Borders and backgrounds --- */
+  --border:         #E2E2DE;
+  --bg-page:        #FAFAF8;
+  --bg-card:        #FFFFFF;
+  --bg-input:       #F7F7F5;
+  --bg-muted:       #F3F3F0;
+ 
+  /* --- Header --- */
+  --header-bg:      #FFFFFF;
+  --header-border:  #E2E2DE;
+ 
+  /* --- Shadows --- */
+  --shadow-soft:    0 1px 4px rgba(0, 0, 0, 0.07);
+  --shadow-medium:  0 2px 12px rgba(0, 0, 0, 0.10);
+ 
+  /* --- Rounded corners --- */
+  --radius-small:   6px;
+  --radius-medium:  10px;
+  --radius-large:   16px;
+ 
+  /* --- Spacing --- */
+  --gap:            16px;
 }
-
+ 
+ 
+/* --- Dark mode overrides --- */
+/* These kick in when the <html> element has data-theme="dark" */
+ 
 [data-theme="dark"] {
-  --brand:        #818CF8;
-  --brand-dark:   #6366F1;
-  --brand-light:  #1E1B4B;
-  --brand-glow:   rgba(129,140,248,0.20);
-  --pass:         #4ADE80;
-  --pass-bg:      #052e16;
-  --fail:         #F87171;
-  --fail-bg:      #450a0a;
-  --partial:      #FBBF24;
-  --partial-bg:   #451a03;
-  --info:         #60A5FA;
-  --info-bg:      #1e3a5f;
-  --bg:           #0F0E1A;
-  --surface:      #1A1828;
-  --surface-2:    #221F35;
-  --surface-3:    #2D2A45;
-  --border:       rgba(129,140,248,0.12);
-  --border-med:   rgba(129,140,248,0.22);
-  --border-strong:rgba(129,140,248,0.40);
-  --text-1:       #E0E7FF;
-  --text-2:       #A5B4FC;
-  --text-3:       #6366F1;
-  --shadow-sm: 0 1px 4px rgba(0,0,0,0.4);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
-  --header-bg: linear-gradient(135deg,#1E1B4B 0%,#312E81 100%);
+  --cream:          #1A1A24;
+  --white:          #24243A;
+  --blue:           #7CB9E8;
+  --blue-dark:      #9ACCE8;
+  --blue-light:     #1E2E40;
+  --green:          #5BAA88;
+  --green-light:    #1A2E26;
+  --red:            #D97060;
+  --red-light:      #2E1A18;
+  --amber:          #D4A840;
+  --amber-light:    #2E2410;
+  --pink:           #D890A8;
+  --pink-light:     #2E1A24;
+ 
+  --text-dark:      #EEEEF5;
+  --text-mid:       #ABABC0;
+  --text-light:     #6A6A88;
+ 
+  --border:         #36364E;
+  --bg-page:        #1A1A24;
+  --bg-card:        #24243A;
+  --bg-input:       #1E1E30;
+  --bg-muted:       #2A2A40;
+ 
+  --header-bg:      #1E1E30;
+  --header-border:  #36364E;
+ 
+  --shadow-soft:    0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-medium:  0 2px 12px rgba(0, 0, 0, 0.4);
 }
-
-/* ── 2. Reset & base ────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.6;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s;min-height:100vh}
-a{color:var(--brand);text-decoration:none;font-weight:500}
-a:hover{text-decoration:underline}
-code{font-family:'Fira Code','Consolas',monospace;font-size:0.85em;background:var(--surface-3);padding:2px 6px;border-radius:var(--r-sm);color:var(--brand)}
-
-/* ── 3. Layout ──────────────────────────────────────────────── */
-.app-shell{display:flex;flex-direction:column;min-height:100vh}
-.app-header{background:var(--header-bg);position:sticky;top:0;z-index:200;box-shadow:var(--shadow-md)}
-.google-strip{height:3px;background:linear-gradient(90deg,#4285F4 0%,#4285F4 25%,#EA4335 25%,#EA4335 50%,#FBBC04 50%,#FBBC04 75%,#34A853 75%,#34A853 100%);opacity:0.9}
-.header-inner{max-width:960px;margin:0 auto;padding:0 1.5rem;height:62px;display:flex;align-items:center;gap:1.25rem}
-.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.logo-mark{font-size:22px;color:#fff;filter:drop-shadow(0 0 6px rgba(255,255,255,0.5))}
-.logo-text{font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#fff}
-.logo-badge{font-size:10px;font-weight:600;background:rgba(255,255,255,0.2);color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:0.05em;text-transform:uppercase}
-.app-main{max-width:960px;width:100%;margin:0 auto;padding:2rem 1.5rem;flex:1}
-
-/* ── 4. Theme toggle ────────────────────────────────────────── */
-.theme-toggle{margin-left:auto;flex-shrink:0;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.28);color:#fff;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:6px}
-.theme-toggle:hover{background:rgba(255,255,255,0.28);transform:none;box-shadow:none}
-.theme-toggle:active{transform:scale(0.97)}
-
-/* ── 5. Tabs ────────────────────────────────────────────────── */
-.tabs{display:flex;gap:4px;margin-bottom:1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:5px;box-shadow:var(--shadow-sm)}
-.tab{flex:1;padding:9px 10px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text-2);border-radius:var(--r-lg);transition:all 0.18s;text-align:center;white-space:nowrap}
-.tab:hover:not(.active){background:var(--surface-3);color:var(--text-1);transform:none;box-shadow:none}
-.tab.active{background:var(--brand);color:#fff;font-weight:600;box-shadow:0 2px 8px var(--brand-glow)}
-.view{display:none}
-.view.active{display:block;animation:fadeIn 0.2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── 6. Cards & forms ───────────────────────────────────────── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow-sm);transition:box-shadow 0.2s}
-.card:hover{box-shadow:var(--shadow-md)}
-.form-group{margin-bottom:1.1rem}
-.form-group:last-child{margin-bottom:0}
-.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:7px}
-input[type="text"],input[type="password"],textarea,select{width:100%;font-family:inherit;font-size:14px;color:var(--text-1);background:var(--surface-2);border:1.5px solid var(--border-med);border-radius:var(--r-md);padding:10px 13px;outline:none;transition:border-color 0.15s,box-shadow 0.15s,background 0.2s;appearance:none}
-input:focus,textarea:focus,select:focus{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 3px var(--brand-glow)}
-input::placeholder,textarea::placeholder{color:var(--text-3)}
-textarea{resize:vertical;line-height:1.6;min-height:90px}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236366F1' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:38px;cursor:pointer}
-
-/* ── 7. Buttons ─────────────────────────────────────────────── */
-button{font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border-radius:var(--r-md);padding:9px 20px;border:1.5px solid var(--border-med);background:var(--surface);color:var(--text-1);transition:all 0.15s;line-height:1}
-button:hover{background:var(--surface-3);border-color:var(--border-strong);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
-button:active{transform:scale(0.97) translateY(0)}
-.btn-primary{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:0 2px 8px var(--brand-glow)}
-.btn-primary:hover{background:var(--brand-dark);border-color:var(--brand-dark);box-shadow:0 4px 14px var(--brand-glow)}
-.btn-outline{background:transparent;border-color:var(--border-strong)}
-.btn-outline:hover{background:var(--surface-2)}
-.btn-danger-outline{border-color:var(--fail);color:var(--fail);background:transparent}
-.btn-danger-outline:hover{background:var(--fail-bg);box-shadow:none;transform:none}
-.btn-small{font-size:11px;padding:4px 10px;color:var(--text-2);border-radius:var(--r-sm)}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap}
-#run-btn{width:100%;padding:13px;font-size:14px;border-radius:var(--r-md);margin-top:4px;background:linear-gradient(135deg,var(--brand) 0%,#7C3AED 100%);border:none;box-shadow:0 4px 14px var(--brand-glow);letter-spacing:0.02em}
-#run-btn:hover{background:linear-gradient(135deg,var(--brand-dark) 0%,#6D28D9 100%);box-shadow:0 6px 20px var(--brand-glow);transform:translateY(-2px)}
-
-/* ── 8. API key bar ─────────────────────────────────────────── */
-.api-bar{display:flex;align-items:center;gap:10px;flex:1;max-width:520px}
-.api-key-input{flex:1;margin:0;font-size:13px;padding:7px 12px;height:36px;background:rgba(255,255,255,0.14)!important;border:1px solid rgba(255,255,255,0.28)!important;color:#fff!important;border-radius:var(--r-md)}
-.api-key-input::placeholder{color:rgba(255,255,255,0.55)!important}
-.api-key-input:focus{background:rgba(255,255,255,0.22)!important;border-color:rgba(255,255,255,0.6)!important;box-shadow:0 0 0 3px rgba(255,255,255,0.12)!important}
-.api-status{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);flex-shrink:0;transition:background 0.3s,box-shadow 0.3s}
-.api-status.ok{background:#4ADE80;box-shadow:0 0 0 3px rgba(74,222,128,0.3)}
-.api-status.err{background:#F87171;box-shadow:0 0 0 3px rgba(248,113,113,0.3)}
-.api-label{font-size:11px;color:rgba(255,255,255,0.75);white-space:nowrap;font-weight:500}
-
-/* ── 9. Notice boxes ────────────────────────────────────────── */
-.notice-box{background:var(--info-bg);border:1.5px solid var(--info);border-radius:var(--r-md);padding:12px 16px;font-size:13px;color:var(--info);margin-bottom:1.25rem;line-height:1.6;display:flex;align-items:flex-start;gap:10px}
-.notice-box::before{content:"💡";font-size:16px;flex-shrink:0;margin-top:1px}
-.notice-box a{color:var(--google-blue);font-weight:600}
-
-/* ── 10. AI response area ───────────────────────────────────── */
-.response-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.ai-response-box{background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--r-md);padding:16px;font-size:14px;line-height:1.75;color:var(--text-1);min-height:80px;white-space:pre-wrap;word-break:break-word;position:relative}
-.ai-response-box::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--brand) 0%,#7C3AED 100%);border-radius:var(--r-md) 0 0 var(--r-md)}
-.eval-divider{border:none;border-top:1.5px dashed var(--border-med);margin:20px 0}
-
-/* ── 11. Stars ──────────────────────────────────────────────── */
-.star-row{display:flex;gap:6px;align-items:center}
-.star{font-size:26px;cursor:pointer;color:var(--border-med);line-height:1;transition:color 0.12s,transform 0.12s;user-select:none}
-.star:hover{transform:scale(1.25) rotate(-5deg);color:var(--google-amber)}
-.star.on{color:var(--google-amber);filter:drop-shadow(0 0 4px rgba(251,188,4,0.5))}
-
-/* ── 12. Badges & chips ─────────────────────────────────────── */
-.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap}
-.badge-pass   {background:var(--pass-bg);   color:var(--pass)}
-.badge-fail   {background:var(--fail-bg);   color:var(--fail)}
-.badge-partial{background:var(--partial-bg);color:var(--partial)}
-.badge-open   {background:var(--fail-bg);   color:var(--fail)}
-.badge-closed {background:var(--pass-bg);   color:var(--pass)}
-.sev-high{background:var(--fail-bg);   color:var(--fail)}
-.sev-med {background:var(--partial-bg);color:var(--partial)}
-.sev-low {background:var(--pass-bg);   color:var(--pass)}
-.chip{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid var(--border-med);color:var(--text-2);background:var(--surface-2)}
-
-/* ── 13. Metrics ────────────────────────────────────────────── */
-.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:1.5rem}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem 1rem;text-align:center;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform 0.18s,box-shadow 0.18s}
-.metric::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--brand),#7C3AED);opacity:0.5}
-.metric:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.metric-val{font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-0.03em}
-.metric-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-top:5px}
-.pass-val    {color:var(--pass)}
-.fail-val    {color:var(--fail)}
-.sev-high-val{color:var(--fail)}
-.sev-med-val {color:var(--partial)}
-.sev-low-val {color:var(--pass)}
-
-/* ── 14. Lists ──────────────────────────────────────────────── */
-.result-row{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);gap:14px}
-.result-row:last-child{border-bottom:none}
-.result-prompt{font-size:13px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.result-meta{font-size:12px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.result-note{font-size:12px;color:var(--text-2);margin-top:5px;white-space:pre-wrap;font-style:italic}
-.bug-row{padding:14px 0;border-bottom:1px solid var(--border)}
-.bug-row:last-child{border-bottom:none}
-.bug-title{font-size:14px;font-weight:600}
-.bug-meta{font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.5}
-.feedback-item{padding:12px 0;border-bottom:1px solid var(--border)}
-.feedback-item:last-child{border-bottom:none}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
-.section-label{font-size:14px;font-weight:700;letter-spacing:-0.01em}
-.empty{text-align:center;padding:2.5rem 1rem;font-size:14px;color:var(--text-3);font-style:italic}
-
-/* ── 15. Animations & utilities ─────────────────────────────── */
-.spinner{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.65s linear infinite;vertical-align:middle;margin-right:8px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── 16. Responsive ─────────────────────────────────────────── */
-@media(max-width:640px){
-  .form-row-2{grid-template-columns:1fr}
-  .metric-grid{grid-template-columns:repeat(2,1fr)}
-  .header-inner{gap:0.6rem}
-  .logo-text,.logo-badge{display:none}
-  .tabs{gap:2px;padding:4px}
-  .tab{font-size:11px;padding:8px 5px}
-  .app-main{padding:1.25rem 1rem}
-  .card{padding:1.1rem}
-  .api-label{display:none}
+ 
+ 
+/* ================================================================
+   2. BASE RESET AND BODY
+================================================================ */
+ 
+/* Remove default spacing on everything */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-@media(max-width:400px){
-  .metric-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-  .metric-val{font-size:24px}
-  .btn-row{flex-direction:column}
-  .btn-row button{width:100%}
+ 
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: var(--bg-page);
+  /* Smooth transition when switching dark/light mode */
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+ 
+/* Links */
+a {
+  color: var(--blue-dark);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+ 
+/* Inline code snippets */
+code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  background-color: var(--bg-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius-small);
+  color: var(--blue-dark);
+}
+ 
+ 
+/* ================================================================
+   3. PAGE LAYOUT AND HEADER
+================================================================ */
+ 
+/* The outermost wrapper — makes the app fill the full height */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+ 
+/* The sticky header bar at the top */
+.app-header {
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.25s ease;
+}
+ 
+/* The thin coloured strip below the header (Google colours) */
+.google-strip {
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    #4285F4 0%,   /* Google blue */
+    #4285F4 25%,
+    #EA4335 25%,  /* Google red */
+    #EA4335 50%,
+    #FBBC04 50%,  /* Google yellow */
+    #FBBC04 75%,
+    #34A853 75%,  /* Google green */
+    #34A853 100%
+  );
+}
+ 
+/* The main content area below the header */
+.app-main {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 28px 20px;
+  flex: 1;
+}
+ 
+ 
+/* ================================================================
+   4. HEADER INNER CONTENT
+   The header contains three things side by side:
+   - The logo (left)
+   - The API key input bar (centre, takes up remaining space)
+   - The dark/light mode toggle (right)
+================================================================ */
+ 
+.header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+ 
+/* --- Logo --- */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* never shrink the logo */
+}
+ 
+.logo-mark {
+  font-size: 20px;
+  color: var(--blue-dark);
+}
+ 
+.logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+ 
+.logo-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--blue-dark);
+  background-color: var(--blue-light);
+  padding: 2px 7px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+ 
+/* --- API key bar --- */
+/* flex: 1 makes this take up all the remaining space in the header */
+.api-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Cap the width so it doesn't get huge on wide screens */
+  max-width: 480px;
+}
+ 
+/* The small coloured dot showing connection status */
+.api-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--border);
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+.api-status.ok  { background-color: var(--green); }
+.api-status.err { background-color: var(--red); }
+ 
+/* The API key password input */
+.api-key-input {
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-dark);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  /* Remove the default margin that inputs sometimes have */
+  margin: 0;
+}
+.api-key-input::placeholder {
+  color: var(--text-light);
+  font-size: 12px;
+}
+.api-key-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(124, 185, 232, 0.2);
+}
+ 
+/* The "Not connected" / "Gemini key ready" text */
+.api-label {
+  font-size: 11px;
+  color: var(--text-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+ 
+/* --- Theme toggle button --- */
+.theme-toggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-mid);
+  background-color: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.theme-toggle:hover {
+  background-color: var(--blue-light);
+  color: var(--blue-dark);
+  border-color: var(--blue);
+  transform: none;
+  box-shadow: none;
+}
+ 
+ 
+/* ================================================================
+   5. NAVIGATION TABS
+================================================================ */
+ 
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0;
+}
+ 
+.tab {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-mid);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  /* Offset the parent border-bottom */
+  margin-bottom: -2px;
+  cursor: pointer;
+  border-radius: 0;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+ 
+.tab:hover:not(.active) {
+  color: var(--text-dark);
+  background: none;
+  transform: none;
+  box-shadow: none;
+}
+ 
+/* The currently selected tab gets a blue underline */
+.tab.active {
+  color: var(--blue-dark);
+  border-bottom-color: var(--blue-dark);
+  font-weight: 600;
+  background: none;
+  box-shadow: none;
+}
+ 
+/* Hide all views, show only the active one */
+.view {
+  display: none;
+}
+.view.active {
+  display: block;
+}
+ 
+ 
+/* ================================================================
+   6. CARDS
+   White rounded boxes that hold form sections and lists.
+================================================================ */
+ 
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-soft);
+  transition: background-color 0.25s ease;
+}
+ 
+ 
+/* ================================================================
+   7. FORM ELEMENTS
+================================================================ */
+ 
+/* Groups a label + input together with spacing below */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group:last-child {
+  margin-bottom: 0;
+}
+ 
+/* Two inputs side by side */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+ 
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+}
+ 
+/* Shared styles for text inputs, selects, and textareas */
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px 13px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-dark);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  appearance: none;
+}
+ 
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--blue);
+  background-color: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(124, 185, 232, 0.2);
+}
+ 
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-light);
+}
+ 
+textarea {
+  resize: vertical;
+  line-height: 1.6;
+  min-height: 88px;
+}
+ 
+/* Custom dropdown arrow for selects */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A0A0A0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+ 
+ 
+/* ================================================================
+   8. BUTTONS
+================================================================ */
+ 
+button {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-medium);
+  padding: 9px 20px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+  color: var(--text-dark);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  line-height: 1;
+}
+ 
+button:hover {
+  background-color: var(--bg-muted);
+  border-color: var(--text-light);
+  /* Remove the lift effect from the previous version */
+  transform: none;
+  box-shadow: none;
+}
+ 
+button:active {
+  opacity: 0.85;
+  transform: none;
+}
+ 
+/* Blue filled button — main actions */
+.btn-primary {
+  background-color: var(--blue-dark);
+  color: #FFFFFF;
+  border-color: var(--blue-dark);
+}
+.btn-primary:hover {
+  background-color: #3A7DB0;
+  border-color: #3A7DB0;
+}
+ 
+/* Plain outline button */
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text-mid);
+}
+.btn-outline:hover {
+  background-color: var(--bg-muted);
+  border-color: var(--text-light);
+}
+ 
+/* Red outline button — destructive actions */
+.btn-danger-outline {
+  background-color: transparent;
+  border-color: var(--red);
+  color: var(--red);
+}
+.btn-danger-outline:hover {
+  background-color: var(--red-light);
+  border-color: var(--red);
+}
+ 
+/* Tiny button used in lists */
+.btn-small {
+  font-size: 11px;
+  padding: 4px 10px;
+  color: var(--text-mid);
+  border-radius: var(--radius-small);
+}
+ 
+/* Row of buttons side by side */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+ 
+/* The main "Run test" button — full width, a bit bigger */
+#run-btn {
+  width: 100%;
+  padding: 11px;
+  font-size: 14px;
+  margin-top: 4px;
+}
+ 
+ 
+/* ================================================================
+   9. NOTICE INFO BOX
+   The blue box that tells users how to get an API key.
+================================================================ */
+ 
+.notice-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: var(--blue-light);
+  border: 1px solid var(--blue);
+  border-radius: var(--radius-medium);
+  font-size: 13px;
+  color: var(--blue-dark);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+ 
+.notice-box::before {
+  content: "ℹ";
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+ 
+.notice-box a {
+  color: var(--blue-dark);
+  font-weight: 700;
+}
+ 
+.notice-box strong {
+  font-weight: 700;
+}
+ 
+ 
+/* ================================================================
+   10. AI RESPONSE DISPLAY
+================================================================ */
+ 
+/* Row with "AI response" label on left, time chip on right */
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+ 
+/* The box where the AI's reply appears */
+.ai-response-box {
+  background-color: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+  border-radius: var(--radius-medium);
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-dark);
+  min-height: 80px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+ 
+/* Dashed line dividing the response from the evaluation form */
+.eval-divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 20px 0;
+}
+ 
+/* Small timing pill e.g. "1.4s" */
+.chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  background-color: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-mid);
+}
+ 
+/* Bold label used in section headings */
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+ 
+/* A heading row with text on left and button on right */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+ 
+ 
+/* ================================================================
+   11. STAR RATING
+================================================================ */
+ 
+.star-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+ 
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--border);
+  line-height: 1;
+  /* Prevent text selection when clicking quickly */
+  user-select: none;
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+ 
+.star:hover {
+  transform: scale(1.2);
+  color: var(--amber);
+}
+ 
+/* A star that has been selected */
+.star.on {
+  color: var(--amber);
+}
+ 
+ 
+/* ================================================================
+   12. BADGES
+   Small coloured pills showing status or severity.
+================================================================ */
+ 
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+ 
+.badge-pass    { background-color: var(--green-light); color: #2E7D5E; }
+.badge-fail    { background-color: var(--red-light);   color: #B94040; }
+.badge-partial { background-color: var(--amber-light); color: #9A6800; }
+.badge-open    { background-color: var(--red-light);   color: #B94040; }
+.badge-closed  { background-color: var(--green-light); color: #2E7D5E; }
+ 
+.sev-low  { background-color: var(--green-light); color: #2E7D5E; }
+.sev-med  { background-color: var(--amber-light); color: #9A6800; }
+.sev-high { background-color: var(--red-light);   color: #B94040; }
+ 
+ 
+/* ================================================================
+   13. METRIC STAT CARDS
+   The four number boxes at the top of Results and Feedback tabs.
+================================================================ */
+ 
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+ 
+.metric {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  padding: 18px 14px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+  /* Soft left accent line using a border-top in the accent colour */
+  border-top: 3px solid var(--blue);
+  transition: background-color 0.25s ease;
+}
+ 
+.metric-val {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-dark);
+}
+ 
+.metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+  margin-top: 5px;
+}
+ 
+/* Coloured number values */
+.pass-val     { color: #2E7D5E; }
+.fail-val     { color: #B94040; }
+.sev-low-val  { color: #2E7D5E; }
+.sev-med-val  { color: #9A6800; }
+.sev-high-val { color: #B94040; }
+ 
+ 
+/* ================================================================
+   14. RESULT ROWS AND BUG ROWS
+   Items inside the results list and bug list.
+================================================================ */
+ 
+/* Each test result row */
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.result-row:last-child {
+  border-bottom: none;
+}
+ 
+/* The prompt text — cut off with ellipsis if too long */
+.result-prompt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+ 
+/* The small line below the prompt with model, time etc */
+.result-meta {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 3px;
+}
+ 
+/* The tester's written note, shown below the meta line */
+.result-note {
+  font-size: 12px;
+  color: var(--text-mid);
+  margin-top: 4px;
+  font-style: italic;
+  white-space: pre-wrap;
+}
+ 
+/* Bug rows */
+.bug-row {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.bug-row:last-child {
+  border-bottom: none;
+}
+ 
+.bug-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+ 
+.bug-meta {
+  font-size: 12px;
+  color: var(--text-mid);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+ 
+/* Feedback item rows */
+.feedback-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.feedback-item:last-child {
+  border-bottom: none;
+}
+ 
+ 
+/* ================================================================
+   15. EMPTY STATE
+   Shown when a list has nothing in it yet.
+================================================================ */
+ 
+.empty {
+  text-align: center;
+  padding: 32px 16px;
+  font-size: 14px;
+  color: var(--text-light);
+  font-style: italic;
+}
+ 
+ 
+/* ================================================================
+   16. LOADING SPINNER
+   Shown inside the Run test button while waiting for the API.
+================================================================ */
+ 
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 7px;
+}
+ 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+ 
+ 
+/* ================================================================
+   17. RESPONSIVE — MOBILE
+   Adjustments for screens narrower than 600px.
+================================================================ */
+ 
+@media (max-width: 600px) {
+ 
+  /* Stack the two-column form rows into one column */
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+ 
+  /* Stack the four metric boxes into two columns */
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+ 
+  /* Hide the logo text on very small screens to save space */
+  .logo-text,
+  .logo-badge {
+    display: none;
+  }
+ 
+  /* Give the header a bit less padding */
+  .header-inner {
+    padding: 0 14px;
+    gap: 10px;
+  }
+ 
+  /* Reduce main content padding */
+  .app-main {
+    padding: 20px 14px;
+  }
+ 
+  /* Reduce card padding */
+  .card {
+    padding: 16px;
+  }
+ 
+  /* Hide the api label text — just show the dot */
+  .api-label {
+    display: none;
+  }
+ 
+  /* Make tab text a bit smaller */
+  .tab {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+}
+ 
+@media (max-width: 380px) {
+  /* Stack buttons vertically on very small screens */
+  .btn-row {
+    flex-direction: column;
+  }
+  .btn-row button {
+    width: 100%;
+  }
+ 
+  /* Single column metrics */
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 }
