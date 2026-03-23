@@ -100,12 +100,16 @@ async function callGemini(
   apiKey: string,
   startTime: number
 ): Promise<{ response: string; elapsed: string }> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelValue}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelValue}:generateContent`;
 
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        // Gemini uses x-goog-api-key header, not a query param
+        "x-goog-api-key": apiKey,
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         systemInstruction: {
@@ -125,21 +129,33 @@ async function callGemini(
     const data = (await res.json()) as GeminiResponse;
 
     if (data.error) {
-      if (data.error.code === 400) {
+      // Model name is wrong or not available
+      if (data.error.code === 404) {
         return {
-          response: `Invalid API key. Make sure you copied the full key from aistudio.google.com and pasted it correctly.`,
+          response:
+            "Model not found. Try selecting 'Gemini 2.5 Flash' from the dropdown — it is the most reliable free option right now.",
           elapsed: formatElapsed(startTime),
         };
       }
+      // API key is wrong
+      if (data.error.code === 400 || data.error.code === 401 || data.error.code === 403) {
+        return {
+          response:
+            "API key problem: " + data.error.message + "\n\nDouble-check you copied the full key from aistudio.google.com and pasted it correctly.",
+          elapsed: formatElapsed(startTime),
+        };
+      }
+      // Hit the free tier rate limit
       if (data.error.code === 429) {
         return {
           response:
-            "Rate limit reached — you have hit the free tier limit. Wait a minute and try again.",
+            "Rate limit reached — the free Gemini tier allows 15 requests per minute. Please wait 60 seconds and try again.\n\nThis is not an error with your key or the app. It is a Google limit on free accounts. If you need more requests, you can upgrade at aistudio.google.com.",
           elapsed: formatElapsed(startTime),
         };
       }
+      // Any other error — show the raw message so it is debuggable
       return {
-        response: `Gemini error: ${data.error.message}`,
+        response: `Gemini error (${data.error.code}): ${data.error.message}`,
         elapsed: formatElapsed(startTime),
       };
     }

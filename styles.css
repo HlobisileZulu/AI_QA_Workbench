@@ -43,100 +43,96 @@
    16. Loading spinner
    17. Responsive (mobile)
 ================================================================ */
- 
- 
+
 /* ================================================================
    1. CSS VARIABLES
    Change a value here and it updates everywhere it is used.
 ================================================================ */
- 
+
 :root {
- 
   /* --- Colours --- */
-  --cream:          #FAFAF8;
-  --white:          #FFFFFF;
-  --blue:           #7CB9E8;
-  --blue-dark:      #4A90C4;
-  --blue-light:     #E8F4FD;
-  --green:          #6DBF9E;
-  --green-light:    #E6F7F1;
-  --red:            #E8897A;
-  --red-light:      #FDECEA;
-  --amber:          #E8B84B;
-  --amber-light:    #FEF6E4;
-  --pink:           #F0A8C0;
-  --pink-light:     #FEF0F5;
- 
+  --cream: #fafaf8;
+  --white: #ffffff;
+  --blue: #7cb9e8;
+  --blue-dark: #4a90c4;
+  --blue-light: #e8f4fd;
+  --green: #6dbf9e;
+  --green-light: #e6f7f1;
+  --red: #e8897a;
+  --red-light: #fdecea;
+  --amber: #e8b84b;
+  --amber-light: #fef6e4;
+  --pink: #f0a8c0;
+  --pink-light: #fef0f5;
+
   /* --- Text --- */
-  --text-dark:      #2C2C2C;
-  --text-mid:       #6B6B6B;
-  --text-light:     #A0A0A0;
- 
+  --text-dark: #2c2c2c;
+  --text-mid: #6b6b6b;
+  --text-light: #a0a0a0;
+
   /* --- Borders and backgrounds --- */
-  --border:         #E2E2DE;
-  --bg-page:        #FAFAF8;
-  --bg-card:        #FFFFFF;
-  --bg-input:       #F7F7F5;
-  --bg-muted:       #F3F3F0;
- 
+  --border: #e2e2de;
+  --bg-page: #fafaf8;
+  --bg-card: #ffffff;
+  --bg-input: #f7f7f5;
+  --bg-muted: #f3f3f0;
+
   /* --- Header --- */
-  --header-bg:      #FFFFFF;
-  --header-border:  #E2E2DE;
- 
+  --header-bg: #ffffff;
+  --header-border: #e2e2de;
+
   /* --- Shadows --- */
-  --shadow-soft:    0 1px 4px rgba(0, 0, 0, 0.07);
-  --shadow-medium:  0 2px 12px rgba(0, 0, 0, 0.10);
- 
+  --shadow-soft: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --shadow-medium: 0 2px 12px rgba(0, 0, 0, 0.1);
+
   /* --- Rounded corners --- */
-  --radius-small:   6px;
-  --radius-medium:  10px;
-  --radius-large:   16px;
- 
+  --radius-small: 6px;
+  --radius-medium: 10px;
+  --radius-large: 16px;
+
   /* --- Spacing --- */
-  --gap:            16px;
+  --gap: 16px;
 }
- 
- 
+
 /* --- Dark mode overrides --- */
 /* These kick in when the <html> element has data-theme="dark" */
- 
+
 [data-theme="dark"] {
-  --cream:          #1A1A24;
-  --white:          #24243A;
-  --blue:           #7CB9E8;
-  --blue-dark:      #9ACCE8;
-  --blue-light:     #1E2E40;
-  --green:          #5BAA88;
-  --green-light:    #1A2E26;
-  --red:            #D97060;
-  --red-light:      #2E1A18;
-  --amber:          #D4A840;
-  --amber-light:    #2E2410;
-  --pink:           #D890A8;
-  --pink-light:     #2E1A24;
- 
-  --text-dark:      #EEEEF5;
-  --text-mid:       #ABABC0;
-  --text-light:     #6A6A88;
- 
-  --border:         #36364E;
-  --bg-page:        #1A1A24;
-  --bg-card:        #24243A;
-  --bg-input:       #1E1E30;
-  --bg-muted:       #2A2A40;
- 
-  --header-bg:      #1E1E30;
-  --header-border:  #36364E;
- 
-  --shadow-soft:    0 1px 4px rgba(0, 0, 0, 0.3);
-  --shadow-medium:  0 2px 12px rgba(0, 0, 0, 0.4);
+  --cream: #1a1a24;
+  --white: #24243a;
+  --blue: #7cb9e8;
+  --blue-dark: #9acce8;
+  --blue-light: #1e2e40;
+  --green: #5baa88;
+  --green-light: #1a2e26;
+  --red: #d97060;
+  --red-light: #2e1a18;
+  --amber: #d4a840;
+  --amber-light: #2e2410;
+  --pink: #d890a8;
+  --pink-light: #2e1a24;
+
+  --text-dark: #eeeef5;
+  --text-mid: #ababc0;
+  --text-light: #6a6a88;
+
+  --border: #36364e;
+  --bg-page: #1a1a24;
+  --bg-card: #24243a;
+  --bg-input: #1e1e30;
+  --bg-muted: #2a2a40;
+
+  --header-bg: #1e1e30;
+  --header-border: #36364e;
+
+  --shadow-soft: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
- 
- 
+
 /* ================================================================
    2. BASE RESET AND BODY
 ================================================================ */
- 
+
 /* Remove default spacing on everything */
 *,
 *::before,
@@ -145,17 +141,19 @@
   margin: 0;
   padding: 0;
 }
- 
+
 body {
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   font-size: 15px;
   line-height: 1.6;
   color: var(--text-dark);
   background-color: var(--bg-page);
   /* Smooth transition when switching dark/light mode */
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
- 
+
 /* Links */
 a {
   color: var(--blue-dark);
@@ -164,29 +162,28 @@ a {
 a:hover {
   text-decoration: underline;
 }
- 
+
 /* Inline code snippets */
 code {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 13px;
   background-color: var(--bg-muted);
   padding: 2px 6px;
   border-radius: var(--radius-small);
   color: var(--blue-dark);
 }
- 
- 
+
 /* ================================================================
    3. PAGE LAYOUT AND HEADER
 ================================================================ */
- 
+
 /* The outermost wrapper — makes the app fill the full height */
 .app-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
- 
+
 /* The sticky header bar at the top */
 .app-header {
   background-color: var(--header-bg);
@@ -196,23 +193,22 @@ code {
   z-index: 100;
   transition: background-color 0.25s ease;
 }
- 
-/* The thin coloured strip below the header (Google colours) */
-.google-strip {
+
+.strip {
   height: 3px;
   background: linear-gradient(
     to right,
-    #4285F4 0%,   /* Google blue */
-    #4285F4 25%,
-    #EA4335 25%,  /* Google red */
-    #EA4335 50%,
-    #FBBC04 50%,  /* Google yellow */
-    #FBBC04 75%,
-    #34A853 75%,  /* Google green */
-    #34A853 100%
+    #04a6e6be 0%,
+    #05abc9f6 25%,
+    #49c7ee 50%,
+    #7185dbe7 25%,
+    #37c6f1 50%,
+    #7beaf8e8 75%,
+    #22dd95 100%,
+    #6ee48de0 75%
   );
 }
- 
+
 /* The main content area below the header */
 .app-main {
   max-width: 900px;
@@ -221,8 +217,7 @@ code {
   padding: 28px 20px;
   flex: 1;
 }
- 
- 
+
 /* ================================================================
    4. HEADER INNER CONTENT
    The header contains three things side by side:
@@ -230,7 +225,7 @@ code {
    - The API key input bar (centre, takes up remaining space)
    - The dark/light mode toggle (right)
 ================================================================ */
- 
+
 .header-inner {
   max-width: 900px;
   margin: 0 auto;
@@ -240,38 +235,7 @@ code {
   align-items: center;
   gap: 16px;
 }
- 
-/* --- Logo --- */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0; /* never shrink the logo */
-}
- 
-.logo-mark {
-  font-size: 20px;
-  color: var(--blue-dark);
-}
- 
-.logo-text {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-dark);
-  white-space: nowrap;
-}
- 
-.logo-badge {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--blue-dark);
-  background-color: var(--blue-light);
-  padding: 2px 7px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
- 
+
 /* --- API key bar --- */
 /* flex: 1 makes this take up all the remaining space in the header */
 .api-bar {
@@ -282,7 +246,7 @@ code {
   /* Cap the width so it doesn't get huge on wide screens */
   max-width: 480px;
 }
- 
+
 /* The small coloured dot showing connection status */
 .api-status {
   width: 10px;
@@ -292,9 +256,13 @@ code {
   flex-shrink: 0;
   transition: background-color 0.3s ease;
 }
-.api-status.ok  { background-color: var(--green); }
-.api-status.err { background-color: var(--red); }
- 
+.api-status.ok {
+  background-color: var(--green);
+}
+.api-status.err {
+  background-color: var(--red);
+}
+
 /* The API key password input */
 .api-key-input {
   flex: 1;
@@ -307,7 +275,9 @@ code {
   border: 1px solid var(--border);
   border-radius: var(--radius-medium);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   /* Remove the default margin that inputs sometimes have */
   margin: 0;
 }
@@ -317,9 +287,9 @@ code {
 }
 .api-key-input:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(124, 185, 232, 0.2);
+  box-shadow: 0 0 0 3px rgba(122, 185, 233, 0.94);
 }
- 
+
 /* The "Not connected" / "Gemini key ready" text */
 .api-label {
   font-size: 11px;
@@ -327,7 +297,7 @@ code {
   white-space: nowrap;
   flex-shrink: 0;
 }
- 
+
 /* --- Theme toggle button --- */
 .theme-toggle {
   flex-shrink: 0;
@@ -343,7 +313,9 @@ code {
   border: 1px solid var(--border);
   border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 .theme-toggle:hover {
   background-color: var(--blue-light);
@@ -352,12 +324,11 @@ code {
   transform: none;
   box-shadow: none;
 }
- 
- 
+
 /* ================================================================
    5. NAVIGATION TABS
 ================================================================ */
- 
+
 .tabs {
   display: flex;
   gap: 4px;
@@ -365,7 +336,7 @@ code {
   border-bottom: 2px solid var(--border);
   padding-bottom: 0;
 }
- 
+
 .tab {
   padding: 10px 18px;
   font-size: 13px;
@@ -379,25 +350,27 @@ code {
   margin-bottom: -2px;
   cursor: pointer;
   border-radius: 0;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
- 
+
 .tab:hover:not(.active) {
   color: var(--text-dark);
   background: none;
   transform: none;
   box-shadow: none;
 }
- 
+
 /* The currently selected tab gets a blue underline */
 .tab.active {
-  color: var(--blue-dark);
+  color:rgb(79, 103, 212);
   border-bottom-color: var(--blue-dark);
   font-weight: 600;
   background: none;
   box-shadow: none;
 }
- 
+
 /* Hide all views, show only the active one */
 .view {
   display: none;
@@ -405,13 +378,12 @@ code {
 .view.active {
   display: block;
 }
- 
- 
+
 /* ================================================================
    6. CARDS
    White rounded boxes that hold form sections and lists.
 ================================================================ */
- 
+
 .card {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -421,12 +393,11 @@ code {
   box-shadow: var(--shadow-soft);
   transition: background-color 0.25s ease;
 }
- 
- 
+
 /* ================================================================
    7. FORM ELEMENTS
 ================================================================ */
- 
+
 /* Groups a label + input together with spacing below */
 .form-group {
   margin-bottom: 16px;
@@ -434,14 +405,14 @@ code {
 .form-group:last-child {
   margin-bottom: 0;
 }
- 
+
 /* Two inputs side by side */
 .form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
- 
+
 label {
   display: block;
   font-size: 12px;
@@ -451,7 +422,7 @@ label {
   color: var(--text-mid);
   margin-bottom: 6px;
 }
- 
+
 /* Shared styles for text inputs, selects, and textareas */
 input[type="text"],
 textarea,
@@ -465,29 +436,31 @@ select {
   border: 1px solid var(--border);
   border-radius: var(--radius-medium);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   appearance: none;
 }
- 
+
 input[type="text"]:focus,
 textarea:focus,
 select:focus {
   border-color: var(--blue);
   background-color: var(--bg-card);
-  box-shadow: 0 0 0 3px rgba(124, 185, 232, 0.2);
+  box-shadow: 0 0 0 3px rgba(147, 200, 241, 0.99);
 }
- 
+
 input::placeholder,
 textarea::placeholder {
   color: var(--text-light);
 }
- 
+
 textarea {
   resize: vertical;
   line-height: 1.6;
   min-height: 88px;
 }
- 
+
 /* Custom dropdown arrow for selects */
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A0A0A0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -496,12 +469,11 @@ select {
   padding-right: 36px;
   cursor: pointer;
 }
- 
- 
+
 /* ================================================================
    8. BUTTONS
 ================================================================ */
- 
+
 button {
   font-family: inherit;
   font-size: 13px;
@@ -512,10 +484,12 @@ button {
   border: 1px solid var(--border);
   background-color: var(--bg-card);
   color: var(--text-dark);
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
   line-height: 1;
 }
- 
+
 button:hover {
   background-color: var(--bg-muted);
   border-color: var(--text-light);
@@ -523,23 +497,23 @@ button:hover {
   transform: none;
   box-shadow: none;
 }
- 
+
 button:active {
   opacity: 0.85;
   transform: none;
 }
- 
+
 /* Blue filled button — main actions */
 .btn-primary {
   background-color: var(--blue-dark);
-  color: #FFFFFF;
+  color: #ffffff;
   border-color: var(--blue-dark);
 }
 .btn-primary:hover {
-  background-color: #3A7DB0;
-  border-color: #3A7DB0;
+  background-color: #3a7db0;
+  border-color: #3a7db0;
 }
- 
+
 /* Plain outline button */
 .btn-outline {
   background-color: transparent;
@@ -550,7 +524,7 @@ button:active {
   background-color: var(--bg-muted);
   border-color: var(--text-light);
 }
- 
+
 /* Red outline button — destructive actions */
 .btn-danger-outline {
   background-color: transparent;
@@ -561,7 +535,7 @@ button:active {
   background-color: var(--red-light);
   border-color: var(--red);
 }
- 
+
 /* Tiny button used in lists */
 .btn-small {
   font-size: 11px;
@@ -569,14 +543,14 @@ button:active {
   color: var(--text-mid);
   border-radius: var(--radius-small);
 }
- 
+
 /* Row of buttons side by side */
 .btn-row {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
- 
+
 /* The main "Run test" button — full width, a bit bigger */
 #run-btn {
   width: 100%;
@@ -584,48 +558,47 @@ button:active {
   font-size: 14px;
   margin-top: 4px;
 }
- 
- 
+
 /* ================================================================
    9. NOTICE INFO BOX
    The blue box that tells users how to get an API key.
 ================================================================ */
- 
+
+
 .notice-box {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 12px 16px;
-  background-color: var(--blue-light);
+  gap: 5px;
+  padding: 5px 8px;
+  background-color: #cde4f7;
   border: 1px solid var(--blue);
   border-radius: var(--radius-medium);
-  font-size: 13px;
-  color: var(--blue-dark);
-  line-height: 1.6;
-  margin-bottom: 20px;
+  font-size: 12px;
+  color: #171c66;
+  line-height: 1.3;
+  margin-bottom: 10px;
 }
- 
+
 .notice-box::before {
-  content: "ℹ";
   font-size: 15px;
   flex-shrink: 0;
   margin-top: 1px;
+  
 }
- 
+
 .notice-box a {
   color: var(--blue-dark);
   font-weight: 700;
 }
- 
+
 .notice-box strong {
   font-weight: 700;
 }
- 
- 
+
 /* ================================================================
    10. AI RESPONSE DISPLAY
 ================================================================ */
- 
+
 /* Row with "AI response" label on left, time chip on right */
 .response-header {
   display: flex;
@@ -633,7 +606,7 @@ button:active {
   align-items: center;
   margin-bottom: 10px;
 }
- 
+
 /* The box where the AI's reply appears */
 .ai-response-box {
   background-color: var(--bg-muted);
@@ -648,14 +621,14 @@ button:active {
   white-space: pre-wrap;
   word-break: break-word;
 }
- 
+
 /* Dashed line dividing the response from the evaluation form */
 .eval-divider {
   border: none;
   border-top: 1px dashed var(--border);
   margin: 20px 0;
 }
- 
+
 /* Small timing pill e.g. "1.4s" */
 .chip {
   display: inline-block;
@@ -667,14 +640,14 @@ button:active {
   border-radius: 20px;
   color: var(--text-mid);
 }
- 
+
 /* Bold label used in section headings */
 .section-label {
   font-size: 13px;
   font-weight: 700;
   color: var(--text-dark);
 }
- 
+
 /* A heading row with text on left and button on right */
 .section-header {
   display: flex;
@@ -682,18 +655,17 @@ button:active {
   align-items: center;
   margin-bottom: 16px;
 }
- 
- 
+
 /* ================================================================
    11. STAR RATING
 ================================================================ */
- 
+
 .star-row {
   display: flex;
   gap: 4px;
   align-items: center;
 }
- 
+
 .star {
   font-size: 24px;
   cursor: pointer;
@@ -701,25 +673,26 @@ button:active {
   line-height: 1;
   /* Prevent text selection when clicking quickly */
   user-select: none;
-  transition: color 0.1s ease, transform 0.1s ease;
+  transition:
+    color 0.1s ease,
+    transform 0.1s ease;
 }
- 
+
 .star:hover {
   transform: scale(1.2);
   color: var(--amber);
 }
- 
+
 /* A star that has been selected */
 .star.on {
   color: var(--amber);
 }
- 
- 
+
 /* ================================================================
    12. BADGES
    Small coloured pills showing status or severity.
 ================================================================ */
- 
+
 .badge {
   display: inline-block;
   font-size: 10px;
@@ -730,30 +703,53 @@ button:active {
   text-transform: uppercase;
   white-space: nowrap;
 }
- 
-.badge-pass    { background-color: var(--green-light); color: #2E7D5E; }
-.badge-fail    { background-color: var(--red-light);   color: #B94040; }
-.badge-partial { background-color: var(--amber-light); color: #9A6800; }
-.badge-open    { background-color: var(--red-light);   color: #B94040; }
-.badge-closed  { background-color: var(--green-light); color: #2E7D5E; }
- 
-.sev-low  { background-color: var(--green-light); color: #2E7D5E; }
-.sev-med  { background-color: var(--amber-light); color: #9A6800; }
-.sev-high { background-color: var(--red-light);   color: #B94040; }
- 
- 
+
+.badge-pass {
+  background-color: var(--green-light);
+  color: #2e7d5e;
+}
+.badge-fail {
+  background-color: var(--red-light);
+  color: #b94040;
+}
+.badge-partial {
+  background-color: var(--amber-light);
+  color: #9a6800;
+}
+.badge-open {
+  background-color: var(--red-light);
+  color: #b94040;
+}
+.badge-closed {
+  background-color: var(--green-light);
+  color: #2e7d5e;
+}
+
+.sev-low {
+  background-color: var(--green-light);
+  color: #2e7d5e;
+}
+.sev-med {
+  background-color: var(--amber-light);
+  color: #9a6800;
+}
+.sev-high {
+  background-color: var(--red-light);
+  color: #b94040;
+}
+
 /* ================================================================
    13. METRIC STAT CARDS
    The four number boxes at the top of Results and Feedback tabs.
 ================================================================ */
- 
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin-bottom: 20px;
 }
- 
+
 .metric {
   background-color: var(--bg-card);
   border: 1px solid var(--border);
@@ -765,14 +761,14 @@ button:active {
   border-top: 3px solid var(--blue);
   transition: background-color 0.25s ease;
 }
- 
+
 .metric-val {
   font-size: 28px;
   font-weight: 800;
   line-height: 1.1;
   color: var(--text-dark);
 }
- 
+
 .metric-label {
   font-size: 10px;
   font-weight: 700;
@@ -781,20 +777,29 @@ button:active {
   color: var(--text-light);
   margin-top: 5px;
 }
- 
+
 /* Coloured number values */
-.pass-val     { color: #2E7D5E; }
-.fail-val     { color: #B94040; }
-.sev-low-val  { color: #2E7D5E; }
-.sev-med-val  { color: #9A6800; }
-.sev-high-val { color: #B94040; }
- 
- 
+.pass-val {
+  color: #2e7d5e;
+}
+.fail-val {
+  color: #b94040;
+}
+.sev-low-val {
+  color: #2e7d5e;
+}
+.sev-med-val {
+  color: #9a6800;
+}
+.sev-high-val {
+  color: #b94040;
+}
+
 /* ================================================================
    14. RESULT ROWS AND BUG ROWS
    Items inside the results list and bug list.
 ================================================================ */
- 
+
 /* Each test result row */
 .result-row {
   display: flex;
@@ -807,7 +812,7 @@ button:active {
 .result-row:last-child {
   border-bottom: none;
 }
- 
+
 /* The prompt text — cut off with ellipsis if too long */
 .result-prompt {
   font-size: 13px;
@@ -819,14 +824,14 @@ button:active {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
- 
+
 /* The small line below the prompt with model, time etc */
 .result-meta {
   font-size: 11px;
   color: var(--text-light);
   margin-top: 3px;
 }
- 
+
 /* The tester's written note, shown below the meta line */
 .result-note {
   font-size: 12px;
@@ -835,7 +840,7 @@ button:active {
   font-style: italic;
   white-space: pre-wrap;
 }
- 
+
 /* Bug rows */
 .bug-row {
   padding: 14px 0;
@@ -844,20 +849,20 @@ button:active {
 .bug-row:last-child {
   border-bottom: none;
 }
- 
+
 .bug-title {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-dark);
 }
- 
+
 .bug-meta {
   font-size: 12px;
   color: var(--text-mid);
   margin-top: 4px;
   line-height: 1.5;
 }
- 
+
 /* Feedback item rows */
 .feedback-item {
   padding: 12px 0;
@@ -866,13 +871,12 @@ button:active {
 .feedback-item:last-child {
   border-bottom: none;
 }
- 
- 
+
 /* ================================================================
    15. EMPTY STATE
    Shown when a list has nothing in it yet.
 ================================================================ */
- 
+
 .empty {
   text-align: center;
   padding: 32px 16px;
@@ -880,81 +884,80 @@ button:active {
   color: var(--text-light);
   font-style: italic;
 }
- 
- 
+
 /* ================================================================
    16. LOADING SPINNER
    Shown inside the Run test button while waiting for the API.
 ================================================================ */
- 
+
 .spinner {
   display: inline-block;
   width: 14px;
   height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #FFFFFF;
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   vertical-align: middle;
   margin-right: 7px;
 }
- 
+
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
- 
- 
+
 /* ================================================================
    17. RESPONSIVE — MOBILE
    Adjustments for screens narrower than 600px.
 ================================================================ */
- 
+
 @media (max-width: 600px) {
- 
   /* Stack the two-column form rows into one column */
   .form-row-2 {
     grid-template-columns: 1fr;
   }
- 
+
   /* Stack the four metric boxes into two columns */
   .metric-grid {
     grid-template-columns: 1fr 1fr;
   }
- 
+
   /* Hide the logo text on very small screens to save space */
   .logo-text,
   .logo-badge {
     display: none;
   }
- 
+
   /* Give the header a bit less padding */
   .header-inner {
     padding: 0 14px;
     gap: 10px;
   }
- 
+
   /* Reduce main content padding */
   .app-main {
     padding: 20px 14px;
   }
- 
+
   /* Reduce card padding */
   .card {
     padding: 16px;
   }
- 
+
   /* Hide the api label text — just show the dot */
   .api-label {
     display: none;
   }
- 
+
   /* Make tab text a bit smaller */
   .tab {
     font-size: 12px;
     padding: 9px 12px;
   }
 }
- 
+
 @media (max-width: 380px) {
   /* Stack buttons vertically on very small screens */
   .btn-row {
@@ -963,7 +966,7 @@ button:active {
   .btn-row button {
     width: 100%;
   }
- 
+
   /* Single column metrics */
   .metric-grid {
     grid-template-columns: 1fr 1fr;
